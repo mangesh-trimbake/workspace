@@ -3,6 +3,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import os
+import MySQLdb
 
 class ProductSearchAllQuery(CommonBaseHandler):
     

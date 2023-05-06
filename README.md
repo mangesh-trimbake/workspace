@@ -1,4 +1,3 @@
-# workspace
 ## flask rest api
 ```
 #crud for products
@@ -25,37 +24,61 @@ def index():
     
 
 @app.route("/products",methods=['GET', 'POST'])   
-def products():
+@app.route("/products/<product_id>",methods=['GET', 'POST'])   
+def products(product_id = None):
+    
+    products = None
+    product = None
+    exists_product = None
+    
+    response = {}
+    
+    if product_id:
+        product = Product.query.filter(Product.id == product_id).first()
+     else :
+        products = Product.query
+        
     
     if request.method == "POST":
         request_form = dict(request.form)
-
+        
+        if not product:
+            product = Product()
+            exists_product = product.is_exists()                # has to implemet in Product model class
+            if exists_product :
+                response["success"] = "already"
+                response["product"] = exists_product.dictobj
+                return response
+               
         product = product.patchEntity(request_form)
         db.session.add(concept)
         db.session.commit()
         
-        return
+        # return redirect(request.referrer)
+        # return product.dictobj
         
-    if request.method == "GET":
-       products = Product.query.all()
+        
+        
+    # if exists_product:
+    #     response["success"] = "already"
+    #     response["product"] = exists_product.dictobj
+    #     return response
+
+    if product:
+        # response["success"] = "success"
+        # response["product"] = product.dictobj
+        # return response
+        return  product.dictobj
+
+    # response["success"] = "success"
+    # response["products"] = [product.dictobj for product in products]
+    # return products
+    # return response
+    return [product.dictobj for product in products]
        
-       return products
         
-    
-@app.route("/products/<product_id>",methods=['GET', 'POST'])   
-def products(product_id):
-    
-    if request.method == "POST":
-        return
+       
         
-    if request.method == "GET":
-        
-        #product = Product.query.filter(Product.id == product_id).all()[0]
-        product = Product.query.filter(Product.id == product_id).first()
-        
-        return product
-        
-    
 if __name__ == '__main__':
     app.run(debug=True)
     
